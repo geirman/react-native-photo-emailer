@@ -1,0 +1,3 @@
+rootProject.name = 'photoEmailer'
+
+include ':app'
