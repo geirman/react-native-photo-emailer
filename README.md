@@ -31,7 +31,7 @@ You can learn more about solidarity by reading [Solidarity--The CLI for Develope
 
 * Android works great
 * iOS not so much - I can choose/take a photo and the email application launches, but...
-    -- photo is not attached to the email
-    -- regardless whether I 'send' or 'delete draft', I get an "Error - Email could not be sent [Ok] [Cancel]" alert, but the email does actually send.
+[_] photo is not attached to the email
+[_] regardless whether I 'send' or 'delete draft', I get an "Error - Email could not be sent [Ok] [Cancel]" alert, but the email does actually send.
 
 
