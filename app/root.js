@@ -67,7 +67,7 @@ export default class Root extends Component<{}> {
         subject,
         recipients: [to],
         body: 'Optional Comment: ',
-        attachment: { path, type, name: subject },
+        attachment: { path },
         isHTML: true
     }, (error, event) => {
         console.log(error);
