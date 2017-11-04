@@ -10,7 +10,8 @@
 		"react": "16.0.0-beta.5",
 		"react-native": "0.49.5",
 		"react-native-image-picker": "^0.26.7",
-		"react-native-mail": "^3.0.4"
+		"react-native-mail": "^3.0.4",
+		"styled-components": "^2.2.3"
 	},
 	"devDependencies": {
 		"babel-jest": "21.2.0",
