@@ -4,15 +4,19 @@
  * @flow
  */
 import React, { Component } from 'react';
-import { Alert } from 'react-native';
+import { Alert, Image, Text } from 'react-native';
 import styled from 'styled-components/native';
 import { Button } from './components/button';
-import { SpaceAround } from './components/wrappers';
+import { GroupAtTop, Spacer } from './components/layout';
 
 import ImagePicker from 'react-native-image-picker';
 import Mailer from 'react-native-mail';
 
 export default class Root extends Component<{}> {
+  state = {
+      uri: ''
+  }
+
   pickerOptions = {
       title: 'Select Image',
       storageOptions: {
@@ -27,6 +31,7 @@ export default class Root extends Component<{}> {
   handleAndroid = (to, subject) => {
     ImagePicker.showImagePicker(this.pickerOptions, (response) => {
         const { path, type } = response;
+        this.setState({uri: path});
         this.sendImageAndroid(to, subject, path, type);
     });
   }
@@ -58,6 +63,8 @@ export default class Root extends Component<{}> {
   handleIOS = (to, subject) => {
     ImagePicker.showImagePicker(this.pickerOptions, (response) => {
         const { uri } = response;
+        const _uri = uri.replace('file://', '');
+        this.setState({ uri, _uri });
         this.sendImageIOS(to, subject, uri, 'jpeg');
     });
   }
@@ -67,7 +74,7 @@ export default class Root extends Component<{}> {
         subject,
         recipients: [to],
         body: 'Optional Comment: ',
-        attachment: { path },
+        attachment: { path, type: 'jpg', name: '' },
         isHTML: true
     }, (error, event) => {
         console.log(error);
@@ -83,20 +90,35 @@ export default class Root extends Component<{}> {
     });
   }
 
+  getImage = () => !this.state.uri ? null : (
+    <Image
+        source={{uri: this.state.uri}}
+        style={{width: 200, height: 200}}
+        resizeMode='cover' />
+  );
+
   render() {
+    const stateStr = JSON.stringify(this.state, null, 2);
+    const image = this.getImage();
+    console.log('STATE: ', stateStr);
     return (
-      <SpaceAround>
+      <GroupAtTop>
+        <Spacer height={50} />
+
         <Button
-          outline
-          onPress={this.handleAndroid.bind(null, '72@test.frogquest.net', 'A1')}>
-          Email Photo (Android)
+        onPress={this.handleAndroid.bind(null, '72@test.frogquest.net', 'A1')}>
+        Email Photo (Android)
         </Button>
         <Button
-          outline
-          onPress={this.handleIOS.bind(null, '72@test.frogquest.net', 'B1')}>
-          Email Photo (iOS)
+        outline
+        onPress={this.handleIOS.bind(null, '72@test.frogquest.net', 'B1')}>
+        Email Photo (iOS)
         </Button>
-      </SpaceAround>
+        {image}
+        <Text>
+            {this.state.uri && stateStr}
+        </Text>
+      </GroupAtTop>
     );
   }
 }

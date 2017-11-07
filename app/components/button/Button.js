@@ -25,11 +25,11 @@ const ButtonContainer = styled.TouchableHighlight`
 
 const Button = (props) => {
     return (
-        <ButtonContainer
+        <ButtonContainer outline={props.outline}
             onPress={props.onPress}
             underlayColor={colors.highlight}
         >
-            <Label>
+            <Label outline={props.outline}>
                 {props.children}
             </Label>
         </ButtonContainer>
