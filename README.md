@@ -9,6 +9,7 @@ This is a cross-platform, proof-of-concept project with the following expected w
 ## Key Dependencies
 
 * [react-native-mail](https://github.com/chirag04/react-native-mail)
+  ** see the modifications I made to this package in this [stackoverflow answer](https://stackoverflow.com/a/47171736/1349269)
 * [react-native-image-picker](https://github.com/react-community/react-native-image-picker)
 
 ## Install
@@ -29,9 +30,14 @@ You can learn more about solidarity by reading [Solidarity--The CLI for Develope
 
 ## Known Issues
 
-* Android works great
-* iOS not so much - I can choose/take a photo and the email application launches, but...
-    * photo is not attached to the email
-    * regardless whether I 'send' or 'delete draft', I get an "Error - Email could not be sent [Ok] [Cancel]" alert, but the email does actually send.
+* No known issues
+
+## Tested on these physical devices
+
+* Moto Z (Android 7.0)
+* Moto X (Android 5.1)
+* iPhone 5s
+* iPhone 6
+* 10.5" iPad (v 11.0.2)
 
 

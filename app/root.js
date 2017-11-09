@@ -4,7 +4,7 @@
  * @flow
  */
 import React, { Component } from 'react';
-import { Alert, Image, Text } from 'react-native';
+import { Alert, Image, Platform, Text } from 'react-native';
 import styled from 'styled-components/native';
 import { Button } from './components/button';
 import { GroupAtTop, Spacer } from './components/layout';
@@ -17,6 +17,8 @@ export default class Root extends Component<{}> {
       uri: '',
       result: ''
   }
+
+  isAndroid = Platform.OS === 'android';
 
   pickerOptions = (subject) => ({
     title: `Photo for ${subject}`,
@@ -35,62 +37,30 @@ export default class Root extends Component<{}> {
     }
   })
 
-  // ****************************
-  // Android
-  // ****************************
-  handleAndroid = (to, subject) => {
-    ImagePicker.showImagePicker(this.pickerOptions(subject), (response) => {
-        const { path, type, uri } = response;
-        this.setState({uri});
-        this.sendImageAndroid(to, subject, path, type);
+  pickImage = (to, subject) => {
+    const options = this.pickerOptions(subject);
+    ImagePicker.showImagePicker(options, (response) => {
+
+      const { path, type, uri } = response;
+      const filePath = this.isAndroid ? path : uri;
+      const _type = this.isAndroid ? type : 'jpg'; // TODO: might not want to hard code iOS value
+
+      this.setState({uri});
+      this.sendEmail(to, subject, filePath, _type);
     });
   }
 
-  sendImageAndroid = (to, subject, path, type) => {
+  sendEmail = (to, subject, path, type) => {
+    console.log('sendEmail args:', {to, subject, path, type}, {isAndroid: this.isAndroid});
     Mailer.mail({
         subject,
         recipients: [to],
-        body: 'Optional Comment: ',
+        body: 'Optional Description:',
         attachment: { path, type, name: subject },
         isHTML: true
-    }, (error, event) => {
+    },  (error, result) => {
+      console.log('Callback Event:', {error, result});
       if(error) {
-          console.log('Error: Email could not be sent', error);
-          Alert.alert(
-            'Error',
-            'Email could not be sent',
-            [
-              {text: 'Ok', onPress: () => console.log('OK: Email Error Response')},
-              {text: 'Cancel', onPress: () => console.log('CANCEL: Email Error Response')}
-            ],
-            { cancelable: true }
-          )
-        }
-    });
-  }
-
-  // ****************************
-  // IOS
-  // ****************************
-  handleIOS = (to, subject) => {
-    ImagePicker.showImagePicker(this.pickerOptions(subject), (response) => {
-        const { uri } = response;
-        const _uri = uri.replace('file://', '');
-        this.setState({ uri, _uri });
-        this.sendImageIOS(to, subject, uri, 'jpg');
-    });
-  }
-
-  sendImageIOS = (to, subject, path, type) => {
-    Mailer.mail({
-        subject,
-        recipients: [to],
-        body: 'Optional Comment: ',
-        attachment: { path, type, name: subject },
-        isHTML: true
-    }, (err, res) => {
-      console.log('Callback Event:', {err, res});
-      if(err) {
         Alert.alert(
           'Error',
           'Email could not be sent',
@@ -102,10 +72,9 @@ export default class Root extends Component<{}> {
         )
       }
 
-      if(res) {
-        this.setState({result: res});
+      if(result) {
+        this.setState({result});
       }
-
     });
   }
 
@@ -117,21 +86,22 @@ export default class Root extends Component<{}> {
   );
 
   render() {
+
     const stateStr = JSON.stringify(this.state, null, 2);
     const image = this.getImage();
-    console.log('STATE: ', stateStr);
+
     return (
       <GroupAtTop>
         <Spacer height={50} />
 
         <Button
-        onPress={this.handleAndroid.bind(null, '72@test.frogquest.net', 'A1')}>
-        Email Photo (Android)
+        onPress={this.pickImage.bind(null, '72@test.frogquest.net', 'A1')}>
+        Email Photo (A1)
         </Button>
         <Button
         outline
-        onPress={this.handleIOS.bind(null, '72@test.frogquest.net', 'B1')}>
-        Email Photo (iOS)
+        onPress={this.pickImage.bind(null, '72@test.frogquest.net', 'B1')}>
+        Email Photo (B1)
         </Button>
         {image}
         <Text>
