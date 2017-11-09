@@ -9,7 +9,7 @@ This is a cross-platform, proof-of-concept project with the following expected w
 ## Key Dependencies
 
 * [react-native-mail](https://github.com/chirag04/react-native-mail)
-  ** see the modifications I made to this package in this [stackoverflow answer](https://stackoverflow.com/a/47171736/1349269)
+  * see the modifications I made to this package in this [stackoverflow answer](https://stackoverflow.com/a/47171736/1349269)
 * [react-native-image-picker](https://github.com/react-community/react-native-image-picker)
 
 ## Install
