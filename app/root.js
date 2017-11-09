@@ -14,22 +14,32 @@ import Mailer from 'react-native-mail';
 
 export default class Root extends Component<{}> {
   state = {
-      uri: ''
+      uri: '',
+      result: ''
   }
 
-  pickerOptions = {
-      title: 'Select Image',
-      storageOptions: {
-          skipBackup: true,
-          path: 'images',
-      }
-  }
+  pickerOptions = (subject) => ({
+    title: `Photo for ${subject}`,
+    maxWidth: 1024,
+    maxHeight: 1024,
+    quality: 1,
+    storageOptions: {
+      skipBackup: true,
+      cameraRoll: true
+    },
+    permissionDenied: {
+      title: 'Permission Denied',
+      text: 'To take photos using your camera or select photos from your gallery',
+      reTryTitle: 'Retry',
+      okTitle: 'I\'m Sure!'
+    }
+  })
 
   // ****************************
   // Android
   // ****************************
   handleAndroid = (to, subject) => {
-    ImagePicker.showImagePicker(this.pickerOptions, (response) => {
+    ImagePicker.showImagePicker(this.pickerOptions(subject), (response) => {
         const { path, type } = response;
         this.setState({uri: path});
         this.sendImageAndroid(to, subject, path, type);
@@ -44,16 +54,18 @@ export default class Root extends Component<{}> {
         attachment: { path, type, name: subject },
         isHTML: true
     }, (error, event) => {
-        console.log(error);
-        Alert.alert(
-          'Error',
-          'Email could not be sent',
-          [
-            {text: 'Ok', onPress: () => console.log('OK: Email Error Response')},
-            {text: 'Cancel', onPress: () => console.log('CANCEL: Email Error Response')}
-          ],
-          { cancelable: true }
-        )
+      if(error) {
+          console.log('Error: Email could not be sent', error);
+          Alert.alert(
+            'Error',
+            'Email could not be sent',
+            [
+              {text: 'Ok', onPress: () => console.log('OK: Email Error Response')},
+              {text: 'Cancel', onPress: () => console.log('CANCEL: Email Error Response')}
+            ],
+            { cancelable: true }
+          )
+        }
     });
   }
 
@@ -61,11 +73,11 @@ export default class Root extends Component<{}> {
   // IOS
   // ****************************
   handleIOS = (to, subject) => {
-    ImagePicker.showImagePicker(this.pickerOptions, (response) => {
+    ImagePicker.showImagePicker(this.pickerOptions(subject), (response) => {
         const { uri } = response;
         const _uri = uri.replace('file://', '');
         this.setState({ uri, _uri });
-        this.sendImageIOS(to, subject, uri, 'jpeg');
+        this.sendImageIOS(to, subject, uri, 'jpg');
     });
   }
 
@@ -74,10 +86,11 @@ export default class Root extends Component<{}> {
         subject,
         recipients: [to],
         body: 'Optional Comment: ',
-        attachment: { path, type: 'jpg', name: '' },
+        attachment: { path, type, name: subject },
         isHTML: true
-    }, (error, event) => {
-        console.log(error);
+    }, (err, res) => {
+      console.log('Callback Event:', {err, res});
+      if(err) {
         Alert.alert(
           'Error',
           'Email could not be sent',
@@ -87,6 +100,12 @@ export default class Root extends Component<{}> {
           ],
           { cancelable: true }
         )
+      }
+
+      if(res) {
+        this.setState({result: res});
+      }
+
     });
   }
 
@@ -116,7 +135,7 @@ export default class Root extends Component<{}> {
         </Button>
         {image}
         <Text>
-            {this.state.uri && stateStr}
+            {this.state.result}
         </Text>
       </GroupAtTop>
     );
