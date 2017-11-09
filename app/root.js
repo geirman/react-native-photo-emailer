@@ -40,8 +40,8 @@ export default class Root extends Component<{}> {
   // ****************************
   handleAndroid = (to, subject) => {
     ImagePicker.showImagePicker(this.pickerOptions(subject), (response) => {
-        const { path, type } = response;
-        this.setState({uri: path});
+        const { path, type, uri } = response;
+        this.setState({uri});
         this.sendImageAndroid(to, subject, path, type);
     });
   }
